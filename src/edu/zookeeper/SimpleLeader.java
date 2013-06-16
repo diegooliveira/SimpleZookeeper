@@ -9,16 +9,14 @@ public class SimpleLeader implements Watcher {
 	public static void main(String args[]) throws Exception {
 		ZooKeeper zk = new ZooKeeper("localhost:2181", 10000, null);
 		int clientesBrigandoPorLideranca = 13;
-		CountDownLatch countDown = new CountDownLatch(
-				clientesBrigandoPorLideranca);
+		CountDownLatch countDown = new CountDownLatch(clientesBrigandoPorLideranca);
 		for (int contador = 0; contador < clientesBrigandoPorLideranca; contador++)
 			new ExecutorLideranca(contador, zk, countDown).start();
 	}
 
-	private static byte[] nenhumConteudo = "".getBytes();
+	private static byte[] nenhumConteudo = {};
 	private static final String caminhoDaEleicao = "/sistema/eleicao";
 	private final String candidatura;
-	private boolean lider;
 	private int posicao;
 	private ZooKeeper zk;
 
@@ -57,7 +55,7 @@ public class SimpleLeader implements Watcher {
 			validarLideranca();
 			
 			Thread.sleep(10000);
-
+			
 			zk.close();
 		} catch (Exception ex) {
 			throw new RuntimeException("Erro tentando liderança", ex);
@@ -78,9 +76,7 @@ public class SimpleLeader implements Watcher {
 			String ganhador = candidatos.get(0);
 			if (candidatura.endsWith(ganhador)) {
 				System.out.println(posicao + " [" + candidatura + " ] Sou o lider");
-				lider = true;
 			} else {
-	
 				System.out.print(posicao + " [" + candidatura + " ] Não sou o lider, ");
 				String concorrente = "";
 				for (int indice = 0; indice < candidatos.size(); indice++) {
@@ -91,7 +87,7 @@ public class SimpleLeader implements Watcher {
 						break;
 					}
 				}
-	
+				
 				// Obsercando se o lider anterior ainda está vivo.
 				zk.exists(caminhoDaEleicao + "/" + concorrente, this);
 			}
