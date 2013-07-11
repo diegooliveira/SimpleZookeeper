@@ -1,0 +1,57 @@
+
+<project name="ZooKeeper" default="dist">
+
+	<property name="zookeeper.dir" value="/opt/zookeeper-3.4.5/" />
+	<property name="build.dir" value="build" />
+	<property name="build.dir.class" value="${build.dir}/class" />
+
+	<path id="zookeeper.classpath">
+		<fileset dir="${zookeeper.dir}">
+			<include name="zookeeper-3.4.5.jar" />
+		</fileset>
+		<fileset dir="${zookeeper.dir}/lib">
+			<include name="slf4j-*.jar" />
+			<include name="log4j-1.2.15.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${build.dir.class}" />
+	</target>
+
+	<target name="compile">
+		<javac srcdir="src" destdir="${build.dir.class}" debug="on" includeantruntime="false">
+			<classpath refid="zookeeper.classpath" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="init,compile">
+	</target>
+
+	<target name="cliente-watch" depends="dist">
+		<java classname="edu.zookeeper.SimpleClientWatch">
+			<classpath refid="zookeeper.classpath">
+			</classpath>
+			<classpath>
+				<pathelement path="${build.dir.class}" />
+			</classpath>
+
+		</java>
+	</target>
+
+	<target name="simple-leader" depends="dist" >
+		<java classname="edu.zookeeper.SimpleLeader" fork="true">
+			<classpath refid="zookeeper.classpath">
+			</classpath>
+			<classpath>
+				<pathelement path="${build.dir.class}" />
+			</classpath>
+
+		</java>
+	</target>
+
+</project>

@@ -84,7 +84,7 @@ public class ExemploFila {
                         try {
                             String caminhoTrabalho = caminhoFilaServidor + "/" + trabalho;
 
-                            String descricaoTrabalho = new String(zookeeper.getData(caminhoTrabalho, false, null));
+                            String descricaoTrabalho = new String(zookeeper.getData(caminhoTrabalho, null, null));
                             zookeeper.delete(caminhoTrabalho, -1);
 
                             String[] detalhes = descricaoTrabalho.split("\n");
@@ -129,10 +129,10 @@ public class ExemploFila {
             }
         }
 
-        private void criaZnode(String path) throws KeeperException, InterruptedException {
-            Stat existe = zookeeper.exists(path, false);
+        private void criaZnode(String caminho) throws KeeperException, InterruptedException {
+            Stat existe = zookeeper.exists(caminho, null);
             if (existe == null)
-                zookeeper.create(path, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                zookeeper.create(caminho, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
 
         /**
